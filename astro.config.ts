@@ -6,15 +6,17 @@ import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import robotsTxt from "astro-robots-txt";
 import webmanifest from "astro-webmanifest";
-import { defineConfig } from "astro/config";
+import { defineConfig, passthroughImageService } from "astro/config";
 import { expressiveCodeOptions } from "./src/site.config";
 import { siteConfig } from "./src/site.config";
 
 // Remark plugins
 import remarkDirective from "remark-directive"; /* Handle ::: directives as nodes */
-import remarkUnwrapImages from "rehype-unwrap-images";
+import rehypeUnwrapImages from "rehype-unwrap-images";
 import { remarkAdmonitions } from "./src/plugins/remark-admonitions"; /* Add admonitions */
 import { remarkReadingTime } from "./src/plugins/remark-reading-time";
+import remarkMath from 'remark-math'
+import rehypeMathjax from 'rehype-mathjax'
 
 // Rehype plugins
 import rehypeExternalLinks from "rehype-external-links";
@@ -23,6 +25,7 @@ import rehypeExternalLinks from "rehype-external-links";
 export default defineConfig({
 	image: {
 		domains: ["webmention.io"],
+		service: passthroughImageService(),
 	},
 	integrations: [
 		expressiveCode(expressiveCodeOptions),
@@ -84,8 +87,10 @@ export default defineConfig({
 					target: "_blank",
 				},
 			],
+			rehypeMathjax,
+			rehypeUnwrapImages,
 		],
-		remarkPlugins: [remarkUnwrapImages, remarkReadingTime, remarkDirective, remarkAdmonitions],
+		remarkPlugins: [remarkReadingTime, remarkDirective, remarkAdmonitions, remarkMath],
 		remarkRehype: {
 			footnoteLabelProperties: {
 				className: [""],
