@@ -87,11 +87,7 @@ export default defineConfig({
 					target: "_blank",
 				},
 			],
-			rehypeMathjax({
-				svg: {
-					displayAlign: "center",
-				}
-			}),
+			rehypeMathjax,
 			rehypeUnwrapImages,
 		],
 		remarkPlugins: [remarkReadingTime, remarkDirective, remarkAdmonitions, remarkMath],
