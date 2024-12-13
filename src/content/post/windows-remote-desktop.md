@@ -1,6 +1,7 @@
 ---
 title: "windows 11 安装以及远程桌面配置"
 publishDate: "10 Dec 2024"
+updatedDate: "13 Dec 2024"
 description: "昨天给一台闲置的mini PC 重装了一个windows 11系统，又给启用了远程桌面配置，来记录一下这个过程"
 tags: ["Windows"]
 ---
@@ -96,6 +97,25 @@ windows的远程桌面，只允许一个用户使用，所以如果我在笔记�
 
 还有一点要注意的，windows 11桌面版，为了节能，默认是会休眠的，所以就算设置了定时任务，也要测试下，如果系统休眠了，调度器是否还会到时间唤醒系统执行更新ip的脚本，然后继续去休眠。
 这个自动休眠很烦人，因为会导致远程桌面也断开连接。如果连接断了，又休眠了，可能就连不上了。
+
+---
+2024/12/13 更新：
+
+从网上找到了一个免费的 ddns 服务叫做 [dynv6](https://dynv6.com) 能提供ipv6地址的免费解析，用法很简单，先用邮箱注册一个用户，收到激活邮件后去激活，再创建一个zone，可以理解为是一个子域名，比如我填的是 `bj-xxx-123` ，这样我的完整的域名就是 `bj-xxx-123.dns.army`，拿到这个域名就可以添加 `AAAA` 记录去解析 ipv6 地址。
+
+官网的文档提供了很多软件来自动更新 `AAAA` 记录，但是最简单的其实就是2条 `curl` 命令
+
+```shell
+# 更新 AAAA 记录
+curl -fsS "http://dynv6.com/api/update?hostname=bj-xxx-123.dns.army&ipv6=2409:8a00:3098:****&token=csvi****"
+
+# 设置默认的 A 记录
+curl -fsS "http://ipv4.dynv6.com/api/update?hostname=bj-xxx-123.dns.army&ipv4=auto&token=csvi****"
+```
+
+这两条命令都执行完后，去 Records 界面，就能看到最新的 `AAAA` 记录了。因为防火墙的原因，如果去 ping 这个子域名，只能看到解析到的 Ipv6 地址，实际是 ping 不通的，但是不影响用这个域名去远程桌面
+
+---
 
 ## 解决Windows自动休眠
 
