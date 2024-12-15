@@ -48,6 +48,7 @@ export default {
 				// Add any custom fonts here
 				sans: [...fontFamily.sans],
 				serif: [...fontFamily.serif],
+				roboto: ['Roboto', 'sans-serif'],
 			},
 			transitionProperty: {
 				height: "height",
