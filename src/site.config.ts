@@ -19,14 +19,8 @@ export const siteConfig: SiteConfig = {
 	lang: "en-US",
 	// Meta property, found in src/components/BaseHead.astro L:42
 	ogLocale: "en_US",
-	// Option to sort posts by updatedDate if set to true (if property exists). Default (false) will sort by publishDate
-	sortPostsByUpdatedDate: false,
 	// Used to construct the meta title property found in src/components/BaseHead.astro L:11, and webmanifest name found in astro.config.ts L:42
 	title: "Learn new things",
-	webmentions: {
-		// Webmention.io API endpoint. Get your own here: https://webmention.io/, and follow this blog post: https://astro-cactus.chriswilliams.dev/posts/webmentions/
-		link: "",
-	},
 };
 
 // Used to generate links in both the Header & Footer.
@@ -38,6 +32,10 @@ export const menuLinks: { path: string; title: string }[] = [
 	{
 		path: "/posts/",
 		title: "Blog",
+	},
+	{
+		path: "/notes/",
+		title: "Notes",
 	},
 ];
 

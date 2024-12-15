@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-
 	:root,
 	:root[data-theme="light"] {
 		color-scheme: light;
