@@ -3,10 +3,11 @@ title: "在区块链上部署代理节点"
 publishDate: "17 Dec 2024"
 description: "上周在配置本地代理的时候产生了一个点子就是能不能把代理节点放到区块链上，这样就不需要到处去买机场服务，找到最快的线路最便宜的节点，尤其是某个机场被封锁的话，基本所有节点就废了"
 tags: ["blockchain", "web3", "proxy"]
-draft: true
 ---
 
-在[上周的博客](/posts/journal/week2)中讲到了这个想法，这几天有时间打算来验证一下。
+在[上周的博客](/posts/journal/week2)中讲到了这个想法，所谓的机场就是卖服务器的ip，有没办法把自己限制的vps上的闲置的带宽共享出来，自己用不完能让别人也能用呢？
+
+共享经济很美好，但是要解决这个问题必须解决收费的问题，不可能白白分享我的带宽给别人用吧，那么收费的话该怎么收，像滴滴一样让每个车主注册为滴滴司机，然后平台给发钱吗？没这个能力做这个事。区块链就是好办法，让每个翻墙节点都成为区块链矿工，你给别人提供代理服务的同时，会收到区块链挖矿奖励。而客户端要使用区块链节点的翻墙服务，必须要锁定一部分资金到区块链上，由智能合约每天抠出一部分费用。
 
 ## 方案设计
 
@@ -51,81 +52,4 @@ draft: true
 2. 拿来做ip池，写爬虫的人可以用
 
 要想用这个服务的人都要有 SST 代币，就算是拿来封IP，也会要付出成本，可以杜绝恶意节点对网络的攻击。
-
-## 本地部署一个 单节点 substrate 网络
-
-文档见：[https://docs.substrate.io/tutorials/build-a-blockchain/build-local-blockchain/](https://docs.substrate.io/tutorials/build-a-blockchain/build-local-blockchain/)
-
-下载官方的教程项目
-
-```bash
-git clone git@github.com:paritytech/polkadot-sdk-minimal-template.git
-
-cargo build
-```
-
-很久没跑过rust项目了，这个程序在我的 Macbook pro M2 上面大概要7分钟才能编译完，每次修改代码要重新编译，但是幸运的是只要 20s 就能增量编译好。
-
-运行
-
-```bash
-./target/debug/minimal-template-node --dev
-```
-
-这就有了一个单节点的区块链了，可以在这个网络上做一些开发和测试。
-
-## 本地部署一个 2 个节点的 substrate 网络
-
-上面讲了部署一个单节点的网络，但是实际中区块链是一个多节点的 p2p 网络，只有一个节点的网络是没法用的，别人不跟你玩。那么怎么部署多节点的网络呢？先看看官方教程写的部署2节点的网络
-
-文档见：[https://docs.substrate.io/tutorials/build-a-blockchain/simulate-network/](https://docs.substrate.io/tutorials/build-a-blockchain/simulate-network/)
-
-```bash
-
-```
-
-## 在 client 中加入代理服务器的代码
-
-一般的教程都是不建议自己修改client的，大部分都建议自定义 runtime，所谓的runtime其实跟智能合约没差别，都是编译为wasm后保存到区块链上，使用的时候能够调用这个wasm。在 polkadot 中client做的是链下的事情，比如说连 p2p 网络，收集交易，暴露 telemetry 等等。因为我要给这个节点多加一个代理服务器的功能，所以我选择在client中加入代理服务器的代码。
-
-找到 `node/src/service.rs`
-
-```rust ins={22..31}
-if config.offchain_worker.enabled {
-    task_manager.spawn_handle().spawn(
-        "offchain-workers-runner",
-        "offchain-worker",
-        sc_offchain::OffchainWorkers::new(sc_offchain::OffchainWorkerOptions {
-            runtime_api_provider: client.clone(),
-            is_validator: config.role.is_authority(),
-            keystore: Some(keystore_container.keystore()),
-            offchain_db: backend.offchain_storage(),
-            transaction_pool: Some(OffchainTransactionPoolFactory::new(
-                transaction_pool.clone(),
-            )),
-            network_provider: Arc::new(network.clone()),
-            enable_http_requests: true,
-            custom_extensions: |_| vec![],
-        })
-        .run(client.clone(), task_manager.spawn_handle())
-        .boxed(),
-    );
-}
-
-task_manager.spawn_handle().spawn("http-proxy", "start http proxy", async {
-    new_http_server();
-    // 每5s打印一个 hello world
-    let mut i = 0;
-    loop {
-        i += 1;
-        futures_timer::Delay::new(std::time::Duration::from_secs(5)).await;
-        println!("hello world, i={}", i);
-    }
-}.boxed());
-```
-
-代码加到这里，然后测试运行一下，发现真的每5s都会答应出上面的日志来，说明加的位置是对的。接下来就是要把真实的代理服务器代码加进去。
-
-## 如何实现一个 socks5 代理
-
 
