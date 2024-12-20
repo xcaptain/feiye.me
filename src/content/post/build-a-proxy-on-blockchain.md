@@ -150,6 +150,8 @@ pub fn imOnline(traffic_count: u128, signature: Vec<u8>) {
         let profit = block_avail_profit / 2 / first_100_proxy_nodes.length; // 平均分到每个节点
         transfer(node, profit); // 转账
     }
+
+    delete proxy_traffic_map; // 清空流量统计，因为这个map里的地址都已经结算过收益了
 }
 ```
 

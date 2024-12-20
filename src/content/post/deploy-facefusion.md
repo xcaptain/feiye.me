@@ -47,7 +47,7 @@ docker build -f Dockerfile.cpu -t xcaptain/facefusion:v1 .
 为此我做了一些修改：
 
 
-```Dockerfile ins={1-2}
+```txt ins={1-2}
 COPY ./predefined-assets .assets
 RUN python facefusion.py headless-run --processors face_swapper --face-mask-types box --face-swapper-model inswapper_128  -s ./build_test_once/s-1.jpeg -t ./build_test_once/t-1.jpg -o ./build_test_once/out-1.jpg
 ```
