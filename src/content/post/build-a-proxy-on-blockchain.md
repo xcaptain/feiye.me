@@ -132,26 +132,32 @@ pub fn check_membership(user: address) {
 
 pub proxy_traffic_map: HashMap<AccountId, u128>; // 保存每个代理节点的流量
 
+pub next_distribute_blocknumber: u128; // 下次分配收益的区块号，每8小时分配一次
+
 pub fn imOnline(traffic_count: u128, signature: Vec<u8>) {
     // 验证签名，验证证书，确保心跳包是从可信的客户端发出的 ...
 
     proxy_traffic_map[msg.sender] += traffic_count; // 更新代理节点的流量
 
-    // 触发一次所有代理节点的收入分配
-    let block_avail_profit = total_balance / (max_expire_blocknumber - block.number); // 将锁定的余额均分到每个区块上
-    let first_1000_proxy_nodes = get_nodes_by_traffic(1000); // 取出前 1000 的代理节点
-    for (node in first_1000_proxy_nodes) {
-        let profit = block_avail_profit / 2 / first_1000_proxy_nodes.length; // 平均分到每个节点
-        transfer(node, profit); // 转账
-    }
+    // 如果到了下次分配收益的区块号，那么就开始分配
+    if (block.number > next_distribute_blocknumber) {
+        let block_avail_profit = total_balance / (max_expire_blocknumber - block.number); // 将锁定的余额均分到每个区块上
+        let first_1000_proxy_nodes = get_nodes_by_traffic(1000); // 取出前 1000 的代理节点
+        for (node in first_1000_proxy_nodes) {
+            let profit = block_avail_profit / 2 / first_1000_proxy_nodes.length; // 平均分到每个节点
+            transfer(node, profit); // 转账
+        }
 
-    let first_100_proxy_nodes = get_nodes_by_traffic(100); // 取出前 100 的代理节点
-    for (node in first_100_proxy_nodes) {
-        let profit = block_avail_profit / 2 / first_100_proxy_nodes.length; // 平均分到每个节点
-        transfer(node, profit); // 转账
-    }
+        let first_100_proxy_nodes = get_nodes_by_traffic(100); // 取出前 100 的代理节点
+        for (node in first_100_proxy_nodes) {
+            let profit = block_avail_profit / 2 / first_100_proxy_nodes.length; // 平均分到每个节点
+            transfer(node, profit); // 转账
+        }
 
-    delete proxy_traffic_map; // 清空流量统计，因为这个map里的地址都已经结算过收益了
+        next_distribute_blocknumber = block.number + 8_hours; // 8 小时后再分配下一次的收益
+
+        delete proxy_traffic_map; // 清空流量统计，因为这个map里的地址都已经结算过收益了
+    }
 }
 ```
 
