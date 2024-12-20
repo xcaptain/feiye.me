@@ -14,7 +14,8 @@ const { Content } = await render(note);
 
 <article
 	class:list={[
-		isPreview && "inline-grid rounded-md bg-[rgb(240,240,240)] px-4 py-3 dark:bg-[rgb(33,35,38)]",
+		isPreview &&
+			"inline-grid rounded-md bg-[rgb(240,240,240)] px-4 py-3 dark:bg-[rgb(33,35,38)]",
 	]}
 	data-pagefind-body={isPreview ? false : true}
 >
@@ -40,7 +41,7 @@ const { Content } = await render(note);
 		date={note.data.publishDate}
 	/>
 	<div
-		class="prose prose-sm prose-cactus mt-4 max-w-none [&>p:last-of-type]:mb-0"
+		class="prose prose-lg prose-cactus mt-4 max-w-none [&>p:last-of-type]:mb-0"
 		class:list={{ "line-clamp-6": isPreview }}
 	>
 		<Content />
