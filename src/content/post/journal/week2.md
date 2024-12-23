@@ -1,5 +1,5 @@
 ---
-title: "2024/12/10 ~ 2024/12/15 周报"
+title: "2024/12.2 周报"
 publishDate: "15 Dec 2024"
 description: "这篇文章总结了12/15 这周我看到，听到，学到的一些有意思的事情"
 tags: ["journal", "idea"]
