@@ -55,7 +55,7 @@ site2.example.com
 
 问了一下 GPT，他说是，所以对于多个worker项目，配置文件类似：
 
-```capnp
+```txt
 const config :Workerd.Config = (
   services = [
     // 可以在同一个进程中定义多个服务
@@ -68,7 +68,7 @@ const config :Workerd.Config = (
 
 又问了一下是如何路由请求的，GPT说是根据域名来决定路由到哪个服务上。
 
-```capnp
+```txt
 const config :Workerd.Config = (
   services = [
     (name = "chat1", worker = .chatWorker1, 

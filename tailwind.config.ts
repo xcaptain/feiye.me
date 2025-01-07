@@ -47,8 +47,7 @@ export default {
 			fontFamily: {
 				// Add any custom fonts here
 				sans: [...fontFamily.sans],
-				serif: ['"LXGW WenKai"', ...fontFamily.serif],
-				roboto: ['Roboto', 'sans-serif'],
+				serif: [...fontFamily.serif],
 			},
 			transitionProperty: {
 				height: "height",
