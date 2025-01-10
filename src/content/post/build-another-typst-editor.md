@@ -81,10 +81,24 @@ tags: ["editor", "typst"]
 
 虽然说这个产品可能没什么市场需求市场前景，但是拿来当练手项目，娱乐自己也挺好的，目前我计划了一些需求点，未来有时间可以慢慢做：
 
-- [ ] CodeMirror 编辑器内加上 AI inline completions
+- [x] CodeMirror 编辑器内加上 AI inline completions
 - [ ] 给 CodeMirror 编辑器加上 typst 的语法高亮
 - [ ] 支持图片上传功能
 - [ ] 给文档加上权限控制，避免用户意外泄露隐私
 - [ ] 持续优化界面和交互体验
 - [ ] 内置一些好看的 ppt 模板
 - [ ] 内置一些网络字体，检测是否字体缺失
+
+## 产品更新记录
+
+### AI 辅助功能
+
+2025/01/10 下午更新
+
+typst 语法虽然复杂，但是AI肯定是懂这个的，因此如果AI能自动补齐 typst 源代码，对于用户来说上手就简单了。网上搜了一下 CodeMirror 
+的 AI 补齐插件，没有很丰富，但是看到一个项目：[https://github.com/yuri2peter/codemirror-ai-enhancer](https://github.com/yuri2peter/codemirror-ai-enhancer) 看了他的demo，挺符合我的需求的，正好作者开源了代码，文档写的也不错，就下下来学习了一下，目前我已经把这个功能集成到 typ.ink 网站上面了，操作体验不像 vscode 那样好，因为要手动按快捷键触发补齐，但是也不错了，至少可以减少我的 AI 接口的调用次数，降低成本。
+
+用法：
+
+1. 自动补齐，按下 <kbd>Ctrl</kbd> + <kbd>J</kbd> 会触发AI补齐光标后的内容，如果觉得合适按下 <kbd>Tab</kbd> 就能接受
+2. 内容改写，选中要修改的文字，按下 <kbd>Ctrl</kbd> + <kbd>K</kbd> 会弹窗一个对话框提示要进行怎样的修改，输入完按回车发送，然后自行判断是否要按 <kbd>Tab</kbd> 接受还是按 <kbd>Esc</kbd> 拒绝
