@@ -5,6 +5,12 @@ description: "又做了一个新的博客站点，使用astro框架和cactus模�
 tags: ["blog"]
 ---
 
+## markdown 小技巧
+
+### 添加脚注
+
+如果要在一个词后面添加脚注，可以在后面加上 `[^1]` 这种，然后在后面任何位置写 `[^1]: 解释语句` 编译markdown的时候就会自动提取到 Footnote 部分 
+
 ## 待做的事
 
 - [ ] 迁移到 tailwindcss V4
