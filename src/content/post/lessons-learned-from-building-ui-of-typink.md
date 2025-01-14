@@ -128,7 +128,75 @@ tags: ["daisyui", "ui", "tailwindcss"]
 
 上面做完了 `contextmenu` 后，已经可以展示右键的菜单了，我需要在这个菜单项里加上一个上传图片的功能，因为 typst 编译的时候可以包含指定路径的图片，大家写文档的时候也经常要插入图片进去，一般编辑器内上传都是直接拖拽或者粘贴图片进去，但是这里我试验一下通过右键菜单触发文件选择，然后在选择完文件后立即调用上传接口进行文件上传。
 
-这个问题我现在也还没找到合适的解决办法，同样 daisyui 只提供了基本的 html + css的组件，想要一个按钮实现打开文件管理器，监听文件选中事件，执行文件上传，应该是要用js才行的。
+这个功能的实现也要依赖js，一步一步触发，大致代码如下：
+
+```svelte
+<script lang="ts">
+let fileUploader: HTMLInputElement | undefined = $state();
+let uploaderFormButton: HTMLButtonElement | undefined = $state();
+
+async function handleFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+        uploaderFormButton?.click();
+    }
+}
+</script>
+
+{#if isOpen}
+    <ul
+        class="menu absolute bg-base-100 shadow-xl rounded-box"
+        style="left: {position[0]}px; top: {position[1]}px;"
+    >
+        <li>
+            <button onclick={() => fileUploader?.click()}
+                >Upload Images</button
+            >
+        </li>
+    </ul>
+{/if}
+<form
+    method="POST"
+    action="?/upload"
+    enctype="multipart/form-data"
+    use:enhance={() => {
+        return async ({ update, result }) => {
+            if (result.type === "success") {
+                files = [
+                    ...files,
+                    ...(result.data!.files as string[]),
+                ];
+            }
+            await update({ reset: true });
+            await applyAction(result);
+        };
+    }}
+>
+    <input
+        id="file-input"
+        type="file"
+        accept="image/*"
+        name="images"
+        multiple
+        hidden
+        bind:this={fileUploader}
+        onchange={handleFileChange}
+    />
+    <button bind:this={uploaderFormButton} type="submit" hidden
+        >Upload</button
+    >
+</form>
+```
+
+上面的 `<ul>` 就是 `contextmenu` 打开后的菜单列表，里面有一个上传按钮
+
+1. 点击上传图片的按钮时，触发 fileinput 的 click 事件，打开操作系统的文件选择器
+2. 选中文件后，触发 fileinput 的 onchange 事件，这里进入到 `handleFileChange` 的回调
+3. 在 `handleFileChange` 的回调中，如果检测到文件长度大于0，触发 `uploaderFormButton` 的 click 事件
+4. 因为 `uploaderFormButton` 按钮是一个 `submit`，所以这个按钮点击会触发对应的 `form` 的提交
+5. 因为这个 `form` 使用了 sveltekit 的 progressive enhance，所以结束后不会触发重定向，反而还能自定义回调，避免刷新页面
+
+到这里上传功能基本就做完了，我觉得最重要的还是 progressive enhance 这部分，避免了页面刷新，当然自己实现一个 fetch，然后通过 xhr request 发送也行，但是这样不太符合全栈开发的思想，如果必复用就没必要抽象。
 
 ## 实现文件列表
 
