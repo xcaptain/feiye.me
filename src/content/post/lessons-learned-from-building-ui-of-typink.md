@@ -2,14 +2,14 @@
 title: "为typink编辑器构建UI界面时学到的一些经验"
 publishDate: "13 Jan 2025"
 description: "上周做了一个在线typst编辑器，完成了基本的UI，周末想优化一下界面，所以进行了一些改版，但是在这个过程中，遇到了一些UI的问题，在这里记录一下我是怎么解决这些问题的"
-tags: ["daisyui", "ui", "tailwindcss"]
+tags: ["daisyui", "ui", "tailwindcss", "typink"]
 ---
 
 上周花了两天时间弄完了 [typ.ink](https://typ.ink) 编辑器的原型，但是这个原型比较丑，因为编辑器界面我是用 daisyui 的 [Divider layout](daisyui.com/components/divider/) 做的，这个布局是左右结构，正好左边放编辑器，右边展示预览结果，但是呢，很显然只有桌面电脑上展示是正确的，在手机上就不行了，因为没有那么宽的屏幕。因此这周末我又参考了一下别的在线编辑器的UI示例，主要是 [replit](https://replit.com)，觉得他们的这个界面做得简洁直观，所以想模仿一下。编辑界面如下图：
 
 ![replit editor](replit-editor.png)
 
-当然，UI组件库还是用 daisyui，不打算换了，虽然这个库缺少很多常用的组件，但是它本身不包含js，我很喜欢这种设计，尽可能用css来渲染界面，只有非不得已再引入js。
+当然，UI组件库还是用 daisyui，不打算换了，虽然这个库缺少很多常用的组件，但是它本身不包含js，我很喜欢这种设计，尽可能用html + css来渲染界面，只有非不得已再引入js。
 
 ## 实现 sidebar
 

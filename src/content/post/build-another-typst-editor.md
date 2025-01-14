@@ -3,7 +3,7 @@ title: "做了一个基于浏览器的 typst 编辑器和编译器"
 publishDate: "10 Jan 2025"
 updatedDate: "14 Jan 2025"
 description: "前几天在写一份商业计划书，写完后想到一个点子就是为什么要在本地写不直接通过浏览器在网上写呢？然后这几天就开始实践这个点子，到今天已经有了一个最小的demo了"
-tags: ["editor", "typst"]
+tags: ["editor", "typst", "typink"]
 ---
 
 ## 背景
@@ -88,7 +88,7 @@ tags: ["editor", "typst"]
 
 - [x] CodeMirror 编辑器内加上 AI inline completions
 - [ ] 给 CodeMirror 编辑器加上 typst 的语法高亮
-- [ ] 支持图片上传功能
+- [x] 支持图片上传功能
 - [ ] 给文档加上权限控制，避免用户意外泄露隐私
 - [ ] 持续优化界面和交互体验
 - [ ] 内置一些好看的 ppt 模板
@@ -114,7 +114,7 @@ typst 语法虽然复杂，但是AI肯定是懂这个的，因此如果AI能自�
 
 2025/01/14 上午更新
 
-周末看到了 replit 的编辑界面，所以模仿着他们的编辑器和编辑界面做了一些更新
+周末看到了 replit 的编辑界面，所以模仿着他们的编辑器和编辑界面做了一些更新，这次更新UI的过程我写了另一篇[博客](/posts/lessons-learned-from-building-ui-of-typink)总结
 
 先看效果图：
 
@@ -127,5 +127,13 @@ typst 语法虽然复杂，但是AI肯定是懂这个的，因此如果AI能自�
 ![typink edit typst](typink-edit-typst.png)
 
 编辑器占据了屏幕大部分空间，可以使用同文件夹下的图片资源了，比如在文本中使用 `#image("ai_woman1.jpeg")` 来渲染图片
+
+改版之后手机上访问也容易多了比如：
+
+![typink phone 1](typink-phone-1.jpg)
+
+![typink phone 2](typink-phone-2.jpg)
+
+![typink phone 3](typink-phone-3.jpg)
 
 之前还头疼怎么复用创建和编辑界面的编辑器，现在换成了这个新的 UI 后不用操心了，因为已经没有创建页了，新建项目的时候用默认模板创建，然后直接进入编辑页。
