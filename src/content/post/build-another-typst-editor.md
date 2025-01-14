@@ -1,6 +1,7 @@
 ---
 title: "做了一个基于浏览器的 typst 编辑器和编译器"
 publishDate: "10 Jan 2025"
+updatedDate: "14 Jan 2025"
 description: "前几天在写一份商业计划书，写完后想到一个点子就是为什么要在本地写不直接通过浏览器在网上写呢？然后这几天就开始实践这个点子，到今天已经有了一个最小的demo了"
 tags: ["editor", "typst"]
 ---
@@ -108,3 +109,23 @@ typst 语法虽然复杂，但是AI肯定是懂这个的，因此如果AI能自�
 
 1. 自动补齐，按下 <kbd>Ctrl</kbd> + <kbd>J</kbd> 会触发AI补齐光标后的内容，如果觉得合适按下 <kbd>Tab</kbd> 就能接受
 2. 内容改写，选中要修改的文字，按下 <kbd>Ctrl</kbd> + <kbd>K</kbd> 会弹窗一个对话框提示要进行怎样的修改，输入完按回车发送，然后自行判断是否要按 <kbd>Tab</kbd> 接受还是按 <kbd>Esc</kbd> 拒绝
+
+### 编辑界面改版
+
+2025/01/14 上午更新
+
+周末看到了 replit 的编辑界面，所以模仿着他们的编辑器和编辑界面做了一些更新
+
+先看效果图：
+
+![typink edit page](typink-edit-page.png)
+
+![typink view image](typink-view-image.png)
+
+在这里我将左侧 sidebar 改为了文件列表，支持通过 `contextmenu` 展示右键菜单，目前只有一个上传图片的选项
+
+![typink edit typst](typink-edit-typst.png)
+
+编辑器占据了屏幕大部分空间，可以使用同文件夹下的图片资源了，比如在文本中使用 `#image("ai_woman1.jpeg")` 来渲染图片
+
+之前还头疼怎么复用创建和编辑界面的编辑器，现在换成了这个新的 UI 后不用操心了，因为已经没有创建页了，新建项目的时候用默认模板创建，然后直接进入编辑页。
