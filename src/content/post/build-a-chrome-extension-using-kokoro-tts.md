@@ -15,7 +15,7 @@ kokoro 是一个强大的本地文本转语音模型，不需要调用昂贵的�
 
 ### kokoro-onnx
 
-这是一个python库，通过python命令行实现文本转语音，目前这个库的速度大概是js版本的5倍
+这是一个python库，通过python命令行实现文本转语音，目前这个库的速度大概是js版本的5倍，因为原生onnxruntime推理比网页内推理快多了。
 
 ## 点子
 
@@ -217,3 +217,147 @@ chrome官方提供的插件开发的教程照着做了一遍，现在对如何�
 1. popup.html: 检测当前url是否已经保存到服务器
 2. background.js: 调用 kokoro.js 运行模型推理生成语音
 3. background.js: 通过 alarm 定时检测本地是否有没转完成的文本，对于无法转换的，及时上报服务器
+
+## 开始写我的 chrome 插件
+
+有了前面的准备工作，就可以开始写我的第一个chrome插件了。前面的教程都没有用框架，完全自己写html和js，这种方式太原始了也很低效，比如说就写一个简单的counter，用原生js写都很麻烦，所以第一步是要选择一个开发框架。
+
+网上能搜到很多插件开发的框架，我选择的是 [wrt](https://wxt.dev)，这个框架能支持用 svelte + typescript 开发，所以就按照官方的教程把相关配置都填上。
+
+### 问题01： oauth 登录
+
+因为我需要把用户生成的音频传到服务器上，所以需要有个账号系统，最简单的办法就是在插件内完成一次google oauth 登录，网页上跳转到谷歌授权然后跳回来实现登录都有现成的解决办法了，如何在插件中完成这个登录流程呢？
+
+chrome 官方提供了一个 [教程](https://developer.chrome.com/docs/extensions/how-to/integrate/oauth) 在这个教程中，实现了一个oauth成功后，拿到 access token，再调用google接口获取通讯录的功能。需要：
+
+1. 去谷歌后台创建oauth client选择 chrome extension client，需要用到extension app id
+2. 去 chrome 后台注册成为开发者（第一次注册要交5美金）
+3. 将插件打包为zip，上传到chrome后台，获取 app id以及public key
+
+这些外部的操作都做完后，我照着官网的例子写了一个获取token的方法
+
+```ts
+async function getAuthToken() {
+    const token = await chrome.identity.getAuthToken({ interactive: false });
+    console.log('get auth token', token);
+}
+```
+
+拿到浏览器上一测试就报错了，说是 edge 浏览器没有这个 api，后来查了一下才知道 `getAuthToken` 这个方法是 chrome 浏览器专属的，虽然edge是基于chrome的，都没有这个方法，所以只能换成 `launchWebAuthFlow` ，这个 api 支持多种 oauth provider，不仅仅限于google，github，facebook的oauth协议也可以用
+
+自己看文档摸索这个 api 的用法太慢了，不如通过搜索引擎看看别人是怎么做的，搜到一篇最近的文章：[https://www.xiegerts.com/post/chrome-extension-oauth-web-auth-flow-firebase-google/](https://www.xiegerts.com/post/chrome-extension-oauth-web-auth-flow-firebase-google/)
+打算参考这篇文章来实现一下我的登录。
+
+照着这篇文章试了很多次，`chrome.identity.launchWebAuthFlow` 依然失败，错误提示是 `redirect_uri_mismatch`，这让我很头疼，作为一个 chrome extension app的 oauth client，根本就没配置回调链接，为什么会提示回调链接错误呢？
+
+我搜了很久，找到了一个类似的[问题](https://stackoverflow.com/a/78863575/3122424) 在这个回答中，作者创建的不是 chrome app而是标准的web app，所以在配置回调链接的时候多配置了一个
+
+```
+https://<extension-id>.chromiumapp.org/google
+```
+
+这样就好理解了，跳到谷歌的域名去进行oauth登录，登录成功后回调到这个 `chromiumapp.org` 的域名，实际就是浏览器插件的域名，会打开浏览器插件，我们可以在回调里面取到 google 返回的 access token，如何使用这个token就看自己的了，一般是拿它去请求一个 jwt token，保存在本地，自己处理好刷新流程。
+
+折腾了几个小时，虽然没有搜到明确的结果，但是我自己总结一下，
+
+1. chrome.identity.getAuthToken：如果要使用这个api，在google oauth后台就要创建chrome extension app
+2. chrome.identity.launchWebAuthFlow：如果要使用这个api，则在google oauth后台创建web app
+
+### 问题02：同步auth.js 登录状态
+
+在上面通过 chrome 的 `chrome.identity.launchWebAuthFlow` 在回调中拿到了 google oauth 服务器返回的 access token，拿到这个token可以去调用谷歌接口获取用户信息。
+
+```shell
+curl -H "Authorization: Bearer the_accessTokenxxx" "https://www.googleapis.com/oauth2/v3/userinfo"
+```
+
+不过这是谷歌返回的登录状态，还得转换为我们网站的登录状态，这样才能把插件采集到的数据提交给服务器，因此这时的问题就成了如何通过 google 的 access token，进行 auth.js 登录。
+
+我看了很久auth.js的文档，想看看能不能通过 access token 生成一个jwt保存在插件里，但是官方没有提供对应的接口，如果自己手动去写那4张表，当然是可以的，但是这样就把问题搞复杂了
+
+### 问题03：在chrome extension中访问网站cookie
+
+在上面遇到插件直接跟服务器鉴权的难题解决不了，但是一番搜索看到有人说可以共享状态，比如说我们网站的地址是 `https://mypod.space`，那么让插件调用 `https://mypod.space/api` 的时候，带上网页内的cookie不就行了，这样只要网站登录了，那么插件就能拿到cookie，那么就能向服务端发请求。
+
+这个办法很好，就等于是在插件中不做登录流程，而是做一个按钮打开新标签页跳到网站去登录。开新标签页很简单，直接调用 `chrome.tabs.create({url})` 就可以，也不用担心回调的问题，直接跳回到网站首页就行，因为只要网站登录了，插件就有登录状态。
+
+在插件内查询网站的cookie有点麻烦，需要2个配置：
+
+```ts
+permissions: [
+    "cookies", // 查询cookie用于登录
+],
+host_permissions: [
+    "*://localhost",
+    "*://mypod.space/",
+],
+```
+
+设置好permissions，这样保证插件能读到cookie，设置 host_permissions 确保插件只能读到我们定义的网站的cookie
+
+### 问题04：设计popup UI
+
+这个没什么好说的，还是用 tailwindcss v4 + daisyui v5，跟网站UI不同的是在这里不是popup应该固定最大宽高，避免被撑太长，我自己简单做了个界面如下：
+
+![mypod space UI](mypod-space-ui.png)
+
+第一个按钮点击后会发请求把采集到的页面内容提交给服务端保存，第二个按钮点击会跳到网站上的个人主页，在那里可以看到自己保存的网页。底下一个 textarea 用来展示采集到的页面内容。
+
+开发插件的UI比较麻烦，因为不像网页有hot reload，我每次改了插件的UI代码都得先花几秒钟build一下，然后去浏览器 reload 一下插件，然后再点击按钮查看样式对不对，效率比较低。
+
+### 问题05：读取页面主要文本
+
+插件有自己的dom，当前网页有自己的dom，如何在插件的dom里，读到网页dom的内容呢？应该是无法直接读的，但是可以通过注入一段content script代码到当前网页，拿到数据后，在返回给调用方，也就是插件内的函数。
+
+要实现这个功能需要额外添加2个权限：
+
+```ts
+permissions: [
+  "scripting",
+  "activeTab"
+]
+```
+
+插件内调用的代码如下：
+```ts
+async function getCurrentTabContent() {
+    const tab = await getCurrentTab();
+    console.log("current tab", tab);
+    if (!tab?.id || !tab.url?.startsWith("http")) return "";
+
+    const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ["content-scripts/content.js"],
+    });
+
+    console.log("document:", results);
+
+    // @ts-ignore
+    content = results[0].result.textContent;
+    // @ts-ignore
+    title = results[0].result.title;
+    url = tab.url;
+}
+```
+
+意思是在当前tab上注入 `content.js` 并执行，然后处理返回结果。在这里我使用了 `@mozilla/readability` 这个库来解析网页内容，不然网页形式千变万化，自己写解析器去解析有用的正文太难了，未来如果想提升解析效果，可以针对特定的网站做优化
+
+### 问题06：本地调用 kokoro-js 生成音频
+
+前几天在网页上调用 kokoro-js 生成音频的demo已经跑通了，所以想着快速迁移到这个插件上。我的做法是点击 Generate 这个按钮的时候，给 background.js 发一条消息，这个service worker 收到消息就会在后台慢慢生成音频，但是遇到一个重大问题，提示在 background 里面没法使用 import，
+导致没法加载远程的模型，这个问题不好调试，因为依赖关系比较深：
+
+`kokoro.js` --> `@huggingface/transformer.js` --> `onnxruntime-web`
+
+一番搜索在 `onnxruntime-web` 的仓库找到了同样的问题，但是还没解决。[https://github.com/microsoft/onnxruntime/issues/20876](https://github.com/microsoft/onnxruntime/issues/20876)
+
+看起来是 `onnxruntime-web` 这个库没有处理好js和wasm运行环境的问题，chrome extension里的service worker 也许和网页上的service worker 有区别，导致在网页上能跑的代码，放到chrome 插件里就跑不了。
+
+我在自己的代码里尝试了很多修改，比如说改tsc build选项，改vite打包配置，改kokoro.js 的device类型等等，但是都没用，也许得等 `onnxruntime-web` 这个问题解决后，再 `@huggingface/transformer.js` 对应的依赖版本升级，再把 `kokoro.js` 的依赖升级，才能解决。
+
+因此我只剩下2条路可以走：
+
+1. 自己直接调用 `onnxruntime-web` 来生成音频，因为评论区有人说有的版本不报错，因此也许这个问题在新版本已经解决了。
+2. 在服务器上生成音频
+
+我决定还是先做一个服务端生成音频的版本，这样基本不会遇到难题，我只要把python的模型打包成docker，传到 azure container apps 就行了，onnxruntime-web 我还没怎么用过得花时间学习，掌握好了之后再集成到插件里，替换服务端生成音频的功能。
