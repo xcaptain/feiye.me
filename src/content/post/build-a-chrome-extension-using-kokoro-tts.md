@@ -361,3 +361,31 @@ async function getCurrentTabContent() {
 2. 在服务器上生成音频
 
 我决定还是先做一个服务端生成音频的版本，这样基本不会遇到难题，我只要把python的模型打包成docker，传到 azure container apps 就行了，onnxruntime-web 我还没怎么用过得花时间学习，掌握好了之后再集成到插件里，替换服务端生成音频的功能。
+
+### 问题07：内容提取质量不高
+
+上面说到我使用 `@mozilla/readability` 这个库来提取网页上的主要文本，但是很多特殊符号，代码，不相关的广告内容也被抓取到了，如果朗读的时候把这些内容也读出来，体验就很差，所以我决定再通过一个AI来总结一下这个网页，然后去读AI总结出来的文字，这样可以让AI只返回纯文本，就不会涉及到朗读代码和广告的尴尬了。
+
+目前 chrome canary 有个实验性的特性是总结文本，是调用本地的gemini模型来进行推理的，不过不知道什么时候能正式发布，所以我绝对还是使用AI接口先应付一下。目前我是通过调用deepseek 的api来进行网页内容总结的，然后再调用 azure 的tts 接口进行语音合成。
+
+## 最终效果
+
+网站：[https://mypod.space](https://mypod.space)
+
+插件主页面：
+
+![plugin main page](mypod-plugin.png)
+
+播客客户端订阅页面:
+
+从网站中复制到自己的 rss 地址，粘贴到常用的播客客户端里，就能收听自己的电台了
+
+![mypod rss sub](mypod-rss-sub.jpg)
+
+播客客户端主界面：
+
+![mypod-main-page](mypod-main-page.jpg)
+
+网站用户主页：
+
+![alt text](mypod-user-page.png)
