@@ -21,7 +21,7 @@ const socialImageURL = new URL(
 <title>{siteTitle}</title>
 
 {/* Icons */}
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link href="/icon.svg" rel="icon" type="image/svg+xml" />
 {
 	import.meta.env.PROD && (
 		<>
@@ -41,9 +41,6 @@ const socialImageURL = new URL(
 <meta content={siteTitle} name="title" />
 <meta content={description} name="description" />
 <meta content={siteConfig.author} name="author" />
-
-{/* Theme Colour */}
-<meta content="" name="theme-color" />
 
 {/* Open Graph / Facebook */}
 <meta content={articleDate ? "article" : "website"} property="og:type" />
@@ -75,10 +72,11 @@ const socialImageURL = new URL(
 <link href="/sitemap-index.xml" rel="sitemap" />
 
 {/* RSS auto-discovery */}
+<link href="/rss.xml" title="Blog" rel="alternate" type="application/rss+xml" />
 <link
-	href="/rss.xml"
+	href="/notes/rss.xml"
+	title="Notes"
 	rel="alternate"
-	title={siteConfig.title}
 	type="application/rss+xml"
 />
 
