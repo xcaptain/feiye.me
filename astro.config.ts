@@ -10,12 +10,12 @@ import { defineConfig, envField } from "astro/config";
 import { expressiveCodeOptions } from "./src/site.config";
 import { siteConfig } from "./src/site.config";
 
+import rehypeMathjax from "rehype-mathjax";
 // Remark plugins
 import remarkDirective from "remark-directive"; /* Handle ::: directives as nodes */
+import remarkMath from "remark-math";
 import { remarkAdmonitions } from "./src/plugins/remark-admonitions"; /* Add admonitions */
 import { remarkReadingTime } from "./src/plugins/remark-reading-time";
-import remarkMath from 'remark-math'
-import rehypeMathjax from 'rehype-mathjax'
 
 // Rehype plugins
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
@@ -98,7 +98,7 @@ export default defineConfig({
 			exclude: ["@resvg/resvg-js"],
 		},
 		plugins: [tailwind(), rawFonts([".ttf", ".woff"])],
-	}
+	},
 });
 
 function rawFonts(ext: string[]) {
