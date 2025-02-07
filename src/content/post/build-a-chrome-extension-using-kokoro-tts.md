@@ -253,7 +253,7 @@ async function getAuthToken() {
 
 我搜了很久，找到了一个类似的[问题](https://stackoverflow.com/a/78863575/3122424) 在这个回答中，作者创建的不是 chrome app而是标准的web app，所以在配置回调链接的时候多配置了一个
 
-```
+```markdown
 https://<extension-id>.chromiumapp.org/google
 ```
 
@@ -320,6 +320,7 @@ permissions: [
 ```
 
 插件内调用的代码如下：
+
 ```ts
 async function getCurrentTabContent() {
     const tab = await getCurrentTab();
@@ -391,6 +392,13 @@ async function getCurrentTabContent() {
 
 ![alt text](mypod-user-page.png)
 
+## 发布扩展
+
+使用 wxt 框架可以很方便地将插件发布到各个浏览器应用商店，通过 `bun run zip` 生成 zip 文件后，传到对应的市场上，填上相关信息，等待审核就行了。我目前用的是 edge 浏览器，所以我发布到了 chrome 和 edge 的应用商店上。
+
+- [chrome app](https://chromewebstore.google.com/detail/mypod-space/bpjkhpggekhbjofkapefhjidgkbomkel)
+- [edge app](https://microsoftedge.microsoft.com/addons/detail/mypod-space/hidhdmfkcncniamhjjhenbngmdbbolmp)
+
 ## 接下来要做的功能
 
 - [ ] 尝试将AI总结和语音生成都放到浏览器里做，这样节省服务端成本
@@ -401,4 +409,4 @@ async function getCurrentTabContent() {
   - [ ] 点击生成按钮出现loading状态
   - [ ] 本地缓存用户状态，避免每次都发请求拿
   - [ ] 配置选项，可设置使用什么语音，是否要翻译为特定的语言
-- [ ] 发布插件到 chrome 市场
+- [x] 发布插件到 chrome 市场
