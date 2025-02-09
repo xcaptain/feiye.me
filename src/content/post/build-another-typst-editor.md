@@ -8,9 +8,7 @@ tags: ["editor", "typst", "typink"]
 
 ## 背景
 
-不知道大家写演示文稿喜欢用什么软件，ppt, wps, 腾讯文档，飞书，还是其它？在上篇博客[^1]中我提到了前几天在写一份简单的演示文档给别人看，因为不常写这种东西所以又开始纠结用什么软件写，我电脑上没装 office，也没有继续订阅 office 365了，所以 office 在我这里被否定掉了。wps更不可能，从来没用过，至于腾讯文档，在微信群里统计信息的时候用过几次，但是基本没有正经拿来写过文档。飞书的话在工作中常用，但是我不想反复切换个人和工作账号，然后给别人发一个飞书链接查看。以前我还用过 `slides.com` 因为看 Youtube 上的技术分享，很多人都喜欢用 `slides.com` 来写文档，然后直接放链接给别人看和下载。以前我还用 vscode + latex 插件写pdf，前几年简历就是拿 latex 编译的，不过因为这几年出了个排版领域的新秀 `typst`，所以我的简历目前已经是用 `typst` 写的了。
-
-[^1]: 见 [2025/01.1 周报](/posts/journal/week4) 最后一段
+不知道大家写演示文稿喜欢用什么软件，ppt, wps, 腾讯文档，飞书，还是其它？在上篇博客中我提到了前几天在写一份简单的演示文档给别人看，因为不常写这种东西所以又开始纠结用什么软件写，我电脑上没装 office，也没有继续订阅 office 365了，所以 office 在我这里被否定掉了。wps更不可能，从来没用过，至于腾讯文档，在微信群里统计信息的时候用过几次，但是基本没有正经拿来写过文档。飞书的话在工作中常用，但是我不想反复切换个人和工作账号，然后给别人发一个飞书链接查看。以前我还用过 `slides.com` 因为看 Youtube 上的技术分享，很多人都喜欢用 `slides.com` 来写文档，然后直接放链接给别人看和下载。以前我还用 vscode + latex 插件写pdf，前几年简历就是拿 latex 编译的，不过因为这几年出了个排版领域的新秀 `typst`，所以我的简历目前已经是用 `typst` 写的了。
 
 综上，目前我要写演示文稿有3种可选方案：
 
@@ -101,9 +99,9 @@ tags: ["editor", "typst", "typink"]
 2025/01/10 下午更新
 
 typst 语法虽然复杂，但是AI肯定是懂这个的，因此如果AI能自动补齐 typst 源代码，对于用户来说上手就简单了。网上搜了一下 CodeMirror 
-的 AI 补齐插件，没有很丰富，但是看到一个项目：[https://github.com/yuri2peter/codemirror-ai-enhancer](https://github.com/yuri2peter/codemirror-ai-enhancer) 看了他的demo[^2]，挺符合我的需求的，正好作者开源了代码，文档写的也不错，就下下来学习了一下，目前我已经把这个功能集成到 typ.ink 网站上面了，操作体验不像 vscode 那样好，因为要手动按快捷键触发补齐，但是也不错了，至少可以减少我的 AI 接口的调用次数，降低成本。
+的 AI 补齐插件，没有很丰富，但是看到一个项目：[https://github.com/yuri2peter/codemirror-ai-enhancer](https://github.com/yuri2peter/codemirror-ai-enhancer) 看了他的demo[^1]，挺符合我的需求的，正好作者开源了代码，文档写的也不错，就下下来学习了一下，目前我已经把这个功能集成到 typ.ink 网站上面了，操作体验不像 vscode 那样好，因为要手动按快捷键触发补齐，但是也不错了，至少可以减少我的 AI 接口的调用次数，降低成本。
 
-[^2]: [CodeMirror AI Enhancer](https://codemirror-ai-enhancer.vercel.app/)
+[^1]: [CodeMirror AI Enhancer](https://codemirror-ai-enhancer.vercel.app/)
 
 用法：
 

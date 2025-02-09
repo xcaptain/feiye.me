@@ -6,7 +6,7 @@ tags: ["blockchain", "web3", "tutorial"]
 draft: true
 ---
 
-在上 [1](/posts/journal/week2), [2](/posts/build-a-proxy-on-blockchain) 中写到了我想要搭建一个基于区块链的代理服务。这篇文章就先记录一下我是如何学习使用 substrate 框架来做链的。
+在[上篇博客](/posts/build-a-proxy-on-blockchain) 中写到了我想要搭建一个基于区块链的代理服务。这篇文章就先记录一下我是如何学习使用 substrate 框架来做链的。
 
 ## 什么是区块链
 
