@@ -422,6 +422,18 @@ AI 是建议我从纯文本开始，跟我自己的思路也是相符合的，�
 
 就以我普通的审美来说已经挺好的了，接下来把这个svg导出为4张不同尺寸的 png 图片当扩展的icon，凑合用吧。
 
+将 svg 导出为 png 的方式很多，因为这种事平时干得少，所以也记录一下这次我是怎么做的。我是用 ImageMagick 命令行工具来转的。
+
+```shell
+winget install "ImageMagick.ImageMagick"
+
+magick -background none -size 16x16 markflow-icon.svg 16.png
+magick -background none -size 32x32 markflow-icon.svg 32.png
+magick -background none -size 48x48 markflow-icon.svg 48.png
+magick -background none -size 96x96 markflow-icon.svg 96.png
+magick -background none -size 128x128 markflow-icon.svg 128.png
+```
+
 ## 产品开发
 
 流程都差不多，先做一个官网，做一个简单的首页，再集成用户登录，然后在扩展里面通过 `host_permissions` 发请求给官网的api交互，添加 `cookies` 权限去本地判断用户是否已经登录，拿用户信息等等。
