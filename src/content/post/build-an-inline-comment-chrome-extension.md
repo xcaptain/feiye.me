@@ -378,6 +378,49 @@ AI 是建议我从纯文本开始，跟我自己的思路也是相符合的，�
 
 因此我决定采用AI 给我的markflow的名字，去 godaddy 花20RMB注册了 markflow.ink 这个域名，就可以开始做网站写插件了。
 
+## 产品icon
+
+这也是一个令我比较头疼的事情，MyPod Space 这个插件的icon是我从网上随便找的png图片，虽然也能用，但是原封不动地抄袭总觉得不太好，但是我自己又确实不懂icon设计。现在网上有很多文生图的产品，这些产品可以用来生成海报，搞笑图片等等，用来生成网站icon还是不太行，最好的icon肯定是简单的svg，就像小米、宝马，奔驰这些icon，都是简简单单几笔就完事。
+
+因此我这次设计icon的思路是去网上找一个免费的svg icon，然后拿来改一改当作自己的。我来 [https://iconoir.com/](https://iconoir.com/) 找了 `multi-bubble` 作为我的基础icon，这是2个泡泡放在一起，看起来就是2个人在评论交流，挺符合我这个产品功能的。接下来我让 AI 帮我改改这个svg，我是这么对 AI 说的：
+
+![use ai to modify my icon](markflow-icon-chat.png)
+
+比较一下二者：
+
+前：
+
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
+    xmlns="http://www.w3.org/2000/svg" color="#000000">
+    <path
+        d="M7.5 22C10.5376 22 13 19.5376 13 16.5C13 13.4624 10.5376 11 7.5 11C4.46243 11 2 13.4624 2 16.5C2 17.5018 2.26783 18.441 2.7358 19.25L2.275 21.725L4.75 21.2642C5.55898 21.7322 6.49821 22 7.5 22Z"
+        stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path
+        d="M15.2824 17.8978C16.2587 17.7405 17.1758 17.4065 18 16.9297L21.6 17.6L20.9297 14C21.6104 12.8233 22 11.4571 22 10C22 5.58172 18.4183 2 14 2C9.97262 2 6.64032 4.97598 6.08221 8.84884"
+        stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+后：
+
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <!-- 注释气泡 -->
+    <path
+        d="M7.5 22C10.5376 22 13 19.5376 13 16.5C13 13.4624 10.5376 11 7.5 11C4.46243 11 2 13.4624 2 16.5C2 17.5018 2.26783 18.441 2.7358 19.25L2.275 21.725L4.75 21.2642C5.55898 21.7322 6.49821 22 7.5 22Z"
+        stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <!-- 带高亮文本的气泡 -->
+    <path
+        d="M15.2824 17.8978C16.2587 17.7405 17.1758 17.4065 18 16.9297L21.6 17.6L20.9297 14C21.6104 12.8233 22 11.4571 22 10C22 5.58172 18.4183 2 14 2C9.97262 2 6.64032 4.97598 6.08221 8.84884"
+        stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <!-- 添加高亮文本的示意线条 -->
+    <path
+        d="M12 6H16M12 9H18"
+        stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"></path>
+</svg>
+
+就以我普通的审美来说已经挺好的了，接下来把这个svg导出为4张不同尺寸的 png 图片当扩展的icon，凑合用吧。
 
 ## 产品开发
 
@@ -503,6 +546,6 @@ const allComments = await platform?.env.DB
 
 ![markflow mvp](markflow-mvp.png)
 
-这个插件主界面是一个 sidepanel，安装后，用户在网页上选中文本，会在附近弹出一个 tooltip，上面有2个按钮，一个是高亮，另一个是评论，我在设计后端存储的数据机构的时候，其实是把高亮和评论都当做一个东西的，高亮是内容为空的评论。用户点击评论按钮，会在sidepanel上面加载一个 textarea 方便用户输入，提交后将评论保存到服务器上，然后更新前端评论列表。评论列表我采用的是youtube或者抖音评论区这种2层嵌套的形式，而不是像reddit那样可以无限嵌套下去。
+这个插件主界面是一个 sidepanel，安装后，用户在网页上选中文本，会在附近弹出一个 tooltip，上面有2个按钮，一个是高亮，另一个是评论，我在设计后端存储的数据结构的时候，其实是把高亮和评论都当做一个东西的，高亮是内容为空的评论。用户点击评论按钮，会在sidepanel上面加载一个 textarea 方便用户输入，提交后将评论保存到服务器上，然后更新前端评论列表。评论列表我采用的是youtube或者抖音评论区这种2层嵌套的形式，而不是像reddit那样可以无限嵌套下去。
 
 到这里我想开发工作可以告一段落了，先把这个扩展程序打包提交到 chrome 应用市场上吧，等审核一般还得3、4天。下周审核过了再找一些朋友测试体验下。

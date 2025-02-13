@@ -1,5 +1,5 @@
 ---
-title: "用 kokoro-tts 模型构建一个chrome扩展"
+title: "做了一个总结网页文本到播客的chrome扩展"
 publishDate: "20 Jan 2025"
 updatedDate: "25 Jan 2025"
 description: "上周看到几个youtube博主评测了kokoro tts 模型，是目前能在本地设备上跑的最新的文本转语音模型，因此想到在本地测试一下"
