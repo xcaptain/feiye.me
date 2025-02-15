@@ -1,0 +1,47 @@
+---
+interface Props {
+    type: 'user' | 'ai';
+}
+
+const { type } = Astro.props;
+
+// 头像URL
+const avatars = {
+    ai: '/images/deepseek.svg',  // 需要添加默认AI头像
+    user: '/images/joey.png'  // 需要添加默认用户头像
+};
+---
+
+<div class={`flex items-start gap-4 mb-6 ${type === 'user' ? 'flex-row-reverse' : ''}`}>
+    {/* 头像 */}
+    <div class="flex-shrink-0 w-8 h-8">
+        <img 
+            src={avatars[type]} 
+            alt={`${type} avatar`} 
+            class="rounded-full w-full h-full"
+        />
+    </div>
+
+    {/* 消息气泡 */}
+    <div class={`relative max-w-[80%] ${type === 'user' ? 'ml-auto' : ''}`}>
+        {/* 气泡箭头 */}
+        <div class={`absolute top-3 ${
+            type === 'user' 
+                ? 'right-[-8px] border-l-[8px]' 
+                : 'left-[-8px] border-r-[8px]'
+        } border-y-[6px] border-y-transparent ${
+            type === 'user'
+                ? 'border-l-blue-100 dark:border-l-blue-900'
+                : 'border-r-gray-100 dark:border-r-gray-800'
+        }`}></div>
+
+        {/* 消息内容 */}
+        <div class={`rounded-lg p-4 ${
+            type === 'user' 
+                ? 'bg-blue-100 dark:bg-blue-900 dark:text-white' 
+                : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-100'
+        }`}>
+            <slot />
+        </div>
+    </div>
+</div>
