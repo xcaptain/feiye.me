@@ -130,3 +130,202 @@ tags: ["AI"]
 根据上面AI给我设计的接口字段，我需要在前端组装好 `browseing_data` 提交给服务器，这里面 `url`, `title`, `time_spent` 应该都能通过 `chrome.history` 这个 api 获取到，`category` 应该是我们自己对已知的网站域名做一些分类，`content` 就要自己提取了。
 
 之前做 MypodSpace 和 Markflow 我都需要读取当前网页内容，当时是通过 `@mozilla/readability` 这个库来读的，这个库能智能识别和提取主体内容，但是效果比较粗糙，对于一些未知的网站用这个库来提取内容可以，但是对于一些主流网站，最好是手写一些抓取的代码，这样提取的内容比较准确，脏数据更少。
+
+我现在使用的是 `dom-to-semantic-markdown` 这个库来提取dom主要内容，想换换新东西试试，如果想要达成最好的效果肯定是要手写解析器的。
+
+### 设计日报提示词
+
+接口格式已经定义好了，这个接口提交的内容很大，因为加入提交100个网页，每个网页的content是1000个字符的话，输入token数量都接近100k了，超过目前deepseek支持的64k最大上下文长度。在这里我准备用 google gemini，因为这个AI支持的上下文窗口很大，能支持100万token，很多人拿他来翻译pdf文件，我拿来处理一点网页内容，生成日报应该不成问题吧，理解归纳对于AI来说是很简单的事情，在这里我考虑的主要是上下文窗口大、速度快、价格便宜，google这个服务目前可以免费用，可能是共享接口，稳定性不如付费好，如果哪天用户上去了，再升级为付费版本也来得及。
+
+要实现一个提示词，让AI来总结这100个网页的内容，然后生成日报，还是比较难的，我是让 AI 来生成这个提示词的，自己想不到这么长，这么详细的提示词，正应了那句话，让AI跟AI交流，比人跟AI交流更快。
+
+```markdown
+
+你是一个专业的浏览日报生成助手，负责将用户的浏览记录转换为精美的日报。请严格按照以下要求生成报告：
+
+### 输入数据格式：
+用户会提供浏览记录，包含日期、总浏览时间、使用语言和详细浏览数据。
+
+### 日报生成要求：
+
+#### 1. **内容分类与整理**
+- 首先分析所有浏览内容
+- 如果页面类别是"other"或缺失，请根据URL、标题和内容自行分类，可能的类别包括：
+  - 技术（编程、开发、IT等）
+  - 新闻（时事、媒体等）
+  - 娱乐（视频、游戏、音乐等）
+  - 社交媒体（社交平台、论坛等）
+  - 工作（办公、协作工具等）
+  - 学习（教育、培训、文档等）
+  - 购物（电商、产品等）
+  - 其他（无法明确分类的内容）
+- 将所有浏览内容按照实际分类组织，不要保留"other"类别
+
+#### 2. **语言适配**
+- 根据 \`language\` 字段选择日报语言（如 zh-CN 用中文，en-US 用英文）
+- 确保所有内容、标题和描述都使用对应语言
+
+#### 3. **日报标题与日期**
+- 中文格式: "# 📅 YYYY年MM月DD日浏览日报"
+- 英文格式: "# 📅 Daily Browsing Report for YYYY-MM-DD"
+
+#### 4. **浏览概览**
+- 创建一个简短的概览部分，总结关键统计信息：
+  - 总浏览时间
+  - 访问的网站数量
+  - 主要浏览的内容类别（按重新分类后的结果）
+  - 为增强视觉效果，使用表情符号如 🕒 (时间)、📊 (统计)
+
+#### 5. **分类内容展示**
+- 根据你的分类结果，为每个类别创建二级标题
+  - 中文: "## 📰 新闻" / "## 💻 技术" / "## 🎮 娱乐" 等
+  - 英文: "## 📰 News" / "## 💻 Technology" / "## 🎮 Entertainment" 等
+- 在每个类别下，列出相关页面：
+  - 页面标题（可链接到原网址）
+  - 浏览时间
+  - 根据内容生成的1-2句摘要，概括用户在此页面可能获取的主要信息
+  - 使用列表格式，并辅以表情符号增强可读性
+
+#### 6. **今日亮点**
+- 从各类别中挑选1-3个最重要或浏览时间最长的页面作为亮点
+- 中文: "## ✨ 今日亮点"
+- 英文: "## ✨ Today's Highlights"
+
+#### 7. **总结与建议**
+- 对浏览行为进行总结，并提供建议
+- 中文: "## 📝 总结与建议"
+- 英文: "## 📝 Summary & Suggestions"
+- 分析用户的浏览模式，提出合理的建议，如时间分配、关注点等
+- 使用友好的语气，辅以表情符号
+
+#### 8. **Markdown格式排版**
+- 使用标准Markdown语法，确保适当缩进和空行
+- 善用加粗、斜体、链接等格式元素
+- 合理使用表情符号增强视觉效果
+
+### 重要说明：
+1. 直接输出纯Markdown格式的日报内容
+2. 不要添加任何代码块标记（如 \`\`\`markdown 或 \`\`\`）
+3. 不要在输出中包含系统提示或解释
+4. 报告内容要基于提供的浏览数据，不要编造不存在的内容
+5. 确保生成的内容专业、有序且美观
+6. 内容分类是日报生成的关键，请仔细分析内容后再进行合理分类
+
+请直接开始生成日报内容，无需添加任何前缀或后缀说明。
+```
+
+### 测试提示词
+
+这涉及到写一点单测，不如每次都去插件上点一下看生成效果太慢了。
+
+```ts
+import { test, expect, describe } from 'bun:test';
+import { generateReport } from '../src/lib/report';
+
+async function getTestHistory() {
+    const file1 = Bun.file('./examples/how-i-build-recaply-blog.md');
+    const text1 = await file1.text();
+
+    const file2 = Bun.file('./examples/bun-reading-file.md');
+    const text2 = await file2.text();
+
+    const file3 = Bun.file('./examples/dom-to-markdown.md');
+    const text3 = await file3.text();
+
+    const file4 = Bun.file('./examples/bilibili-李白-大鹏赋.md');
+    const text4 = await file4.text();
+
+    const file5 = Bun.file('./examples/v2ex-t-1022439.md');
+    const text5 = await file5.text();
+
+    return {
+        date: '2025-03-02',
+        language: 'zh-CN', // zh-CN, en-US
+        total_time: '3h 10m',
+        browsing_data: [
+            {
+                url: 'https://feiye.me/posts/how-i-build-recaply/',
+                title: '我是如何开发 recaply 的',
+                category: 'work',
+                time_spent: '4m',
+                content: text1.slice(0, 1000),
+            },
+            {
+                url: 'https://bun.sh/guides/read-file/string',
+                title: 'Read a file as a string with Bun',
+                category: 'learning',
+                time_spent: '1m',
+                content: text2.slice(0, 1000),
+            },
+            {
+                url: 'https://github.com/romansky/dom-to-semantic-markdown',
+                title: 'romansky/dom-to-semantic-markdown: DOM to Semantic-Markdown for use with LLMs',
+                category: 'work',
+                time_spent: '2m',
+                content: text3.slice(0, 1000),
+            },
+            {
+                url: 'https://www.bilibili.com/video/BV1sVPieyE8x/?spm_id_from=333.788.player.switch&vd_source=b006e936c76c138f12ddafe94e135085',
+                title: '李白《大鹏赋》译文（二）鲲鹏神化',
+                category: 'enterainment',
+                time_spent: '26m',
+                content: text4.slice(0, 1000),
+            },
+            {
+                url: 'https://www.v2ex.com/t/1022439',
+                title: "基于 LangChain 的开源 GPT 向量 + 知识数据库，帮助个人或企业实现自己的专属 AI 问答助手 - V2EX",
+                category: 'enterainment',
+                time_spent: '15m',
+                content: text5.slice(0, 1000),
+            }
+        ]
+    };
+}
+
+describe('Report', () => {
+    test('should return a report', async () => {
+        const history = await getTestHistory();
+
+        const response = await generateReport(history, import.meta.env.GOOGLE_AI_STUDIO_API_TOKEN ?? '');
+        expect(response.length).toBeGreaterThan(100);
+    });
+});
+```
+
+我主要看以下几点：
+
+1. 能否按传入的语言，生成不同语言的日报
+2. 自己看一眼日报内容，看看格式对不对
+
+AI 是个黑盒子，不知道一点点提示词的改动对于输出会有什么影响，所以做好测试还是很重要的。
+
+
+### 网页停留时间统计
+
+我要统计用户在每个url上停留的时间，并且在日报上标注这个时间。这个时间获取起来还比较麻烦，我是改了好多次，最初问了好几个AI，都是让我监控tab的时间，做减法得到停留时间，然后累加起来，大致如下：
+
+```ts
+let activeTab = {
+  tabId: number;
+  startTime: number; // 开始计时的时间
+  url: string;
+}
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  // tab 切换，记录之前那个tab的停留时间
+});
+
+chrome.tabs.onUpdated.addListener(async (activeInfo) => {
+  // 页面刷新，或者打开新的标签页，开始给当前tab重新计时，或者给新tab计时
+});
+```
+
+要监听很多事件，然后还要从这些事件中提取出更细的场景，比如说打开一个新网页，可以是在当前tab打开，也可以是新的tab打开，也可以是打开后不切换到新的tab，还有删除标签也是，可以删除当前活跃标签，也可以删除一个后台标签，反正要把各种可能的场景都考虑到，很容易出错。
+
+这个问题头疼了我好几天，因为总是觉得时间统计不准确，后来我上网一搜，看到了一个开源的时间统计插件 [web activity time tracker](https://github.com/Stigmatoz/web-activity-time-tracker) 看了一下代码，跟我的需求很接近，所以我想抄一下他统计活跃时间的代码。主要是看 `background.ts`，逻辑不复杂，他大概是这样实现的：
+
+1. 设置一个1s执行的定时器，执行的时候去查询当前活跃tab，看是不是跟代码保存的活跃tab一致，如果是，说明用户还停留在这个tab上，那么就要增加1s停留时间
+2. 维持这个活跃tab也很简单，只有切换tab会改 tabId，所以只要在 `tabs.onActivated` 里面及时更新活跃tabId就行
+
+这种一秒一秒定时累加停留时间的方法简单粗暴，但很有用，不需要关心用户的浏览行为是怎样，只要检测到当前tab打开，就给它加1s，虽然说每秒钟都要调用 `await chrome.tabs.query({ active: true, currentWindow: true });` 会产生一点性能开销，但是是可以接受的。
+
+还有2个问题要注意，就是当用户切换到别的软件的时候，应该停止计时，如果开了多个浏览器窗口，也要注意区分哪个是活跃的浏览器窗口，只更新活跃的浏览器的活跃tab的时间。
