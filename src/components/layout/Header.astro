@@ -2,12 +2,10 @@
 import Search from "@/components/Search.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import { menuLinks } from "@/site.config";
+import {siteConfig} from "../../site.config";
 ---
 
-<header
-	class="group relative mb-28 flex items-center sm:ps-18"
-	id="main-header"
->
+<header class="group relative mb-28 flex items-center sm:ps-18" id="main-header">
 	<div class="flex sm:flex-col">
 		<a
 			aria-current={Astro.url.pathname === "/" ? "page" : false}
@@ -15,24 +13,26 @@ import { menuLinks } from "@/site.config";
 			href="/"
 		>
 			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="24"
-				height="24"
+				aria-hidden="true"
+				class="me-3 h-10 w-6 sm:absolute sm:-start-18 sm:me-0 sm:h-20 sm:w-12"
 				fill="none"
 				focusable="false"
-				viewBox="0 0 24 24"
-				class="me-3 h-10 w-6 sm:absolute sm:-start-18 sm:me-0 sm:h-20 sm:w-12"
+				viewBox="0 0 272 480"
+				xmlns="http://www.w3.org/2000/svg"
 			>
+				<title>Logo</title>
 				<path
-					stroke="currentColor"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"
-				>
-				</path>
+					d="M181.334 93.333v-40L226.667 80v40l-45.333-26.667ZM136.001 53.333 90.667 26.667v426.666L136.001 480V53.333Z"
+					fill="#B04304"></path>
+				<path
+					d="m136.001 119.944 45.333-26.667 45.333 26.667-45.333 26.667-45.333-26.667ZM90.667 26.667 136.001 0l45.333 26.667-45.333 26.666-45.334-26.666ZM181.334 53.277l45.333-26.666L272 53.277l-45.333 26.667-45.333-26.667ZM0 213.277l45.333-26.667 45.334 26.667-45.334 26.667L0 213.277ZM136 239.944l-45.333-26.667v53.333L136 239.944Z"
+					fill="#FF5D01"></path>
+				<path
+					d="m136 53.333 45.333-26.666v120L226.667 120V80L272 53.333V160l-90.667 53.333v240L136 480V306.667L45.334 360V240l45.333-26.667v53.334L136 240V53.333Z"
+					fill="#53C68C"></path>
+				<path d="M45.334 240 0 213.334v120L45.334 360V240Z" fill="#B04304"></path>
 			</svg>
-			<span class="text-xl font-bold sm:text-2xl">Joey 起居注</span>
+			<span class="text-xl font-bold sm:text-2xl">{siteConfig.title}</span>
 		</a>
 		<nav
 			aria-label="Main menu"
@@ -42,9 +42,7 @@ import { menuLinks } from "@/site.config";
 			{
 				menuLinks.map((link) => (
 					<a
-						aria-current={
-							Astro.url.pathname === link.path ? "page" : false
-						}
+						aria-current={Astro.url.pathname === link.path ? "page" : false}
 						class="px-4 py-4 underline-offset-2 hover:underline sm:py-0"
 						data-astro-prefetch
 						href={link.path}
@@ -77,10 +75,8 @@ import { menuLinks } from "@/site.config";
 				viewBox="0 0 24 24"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<path
-					d="M3.75 9h16.5m-16.5 6.75h16.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"></path>
+				<path d="M3.75 9h16.5m-16.5 6.75h16.5" stroke-linecap="round" stroke-linejoin="round"
+				></path>
 			</svg>
 			<svg
 				aria-hidden="true"
@@ -94,10 +90,7 @@ import { menuLinks } from "@/site.config";
 				viewBox="0 0 24 24"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<path
-					d="M6 18L18 6M6 6l12 12"
-					stroke-linecap="round"
-					stroke-linejoin="round"></path>
+				<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
 			</svg>
 		</button>
 	</mobile-button>
@@ -111,16 +104,12 @@ import { menuLinks } from "@/site.config";
 
 		connectedCallback() {
 			const headerEl = document.getElementById("main-header")!;
-			const mobileButtonEl =
-				this.querySelector<HTMLButtonElement>("button");
+			const mobileButtonEl = this.querySelector<HTMLButtonElement>("button");
 
 			mobileButtonEl?.addEventListener("click", () => {
 				if (headerEl) toggleClass(headerEl, "menu-open");
 				this.#menuOpen = !this.#menuOpen;
-				mobileButtonEl.setAttribute(
-					"aria-expanded",
-					this.#menuOpen.toString(),
-				);
+				mobileButtonEl.setAttribute("aria-expanded", this.#menuOpen.toString());
 			});
 		}
 	}
