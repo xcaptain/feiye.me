@@ -55,6 +55,35 @@ tags: ["Malware", "Hack"]
 
 不管怎么说，电脑已经重装系统了，应该是已经安全了吧，那天晚上我只有这一台电脑在线，除非这个钓鱼软件把我家的局域网也给攻克，在我的手机上也安装木马程序，但是我想应该不可能这么厉害吧。不管怎样我已经把这台工作电脑的系统重装了，现在家庭网络应该是安全的了。
 
+## 重新管理 ssh keys
+上面说到我在 github 删除了老的 ssh keys，本地重新生成了一个，然后上传。这种方式我觉得还是不够安全，因为私钥文件还是保存在本地磁盘的，例如：`~/.ssh/id_ed25519`，如果电脑还是中了木马病毒，黑客还是能访问到这个文件，然后上传到自己的服务器上。最好的办法应该是保存到类似 bitwarden 这种专业的密码存储软件，或者 windows 凭据管理器里。但是我查了一下，这二者都无法保存 ssh key，不过推荐的做法是启用 `ssh-agent`，然后将私钥保存到 windows hello里，这样每次应用程序需要访问这个私钥，都会触发 windows hello授权一下，私钥本身我再保存到 bitwarden 里备份到别的电脑就行。
+
+启用 ssh-agent 稍微麻烦点，首先要在 windows 可选功能里面，启用 openssh client服务。
+然后到服务配置列表里面，确保这个服务已经开启而且配置了开机自动运行
+
+Win+R:
+
+```
+services.msc
+```
+
+![ssh agent config](./ssh-agent-config.png)
+
+确保它已经启动
+
+然后再把私钥添加到 agent 里
+
+```shell
+ssh-add $env:USERPROFILE\.ssh\id_ed25519
+```
+
+测试效果：
+将 `~/.ssh/id_ed25519` 这个私钥，保存到 Bitwarden 里面，然后本地磁盘删除 `~/.ssh/id_ed25519` 这个文件。
+
+因为我已经将这个pub key添加到 github ssh 作为 authentication key了，所以我只要push一个提交到 github，然后看看会不会唤起 windows hello 授权就行了
+
+
+
 ## 后续做的事情
 
 到现在2天过去了，系统也重装了，账号钱包看起来都是安全的，但是我还是有点不放心，我怕我的 ssh keys 已经泄露了，如果这个文件泄露，黑客将能够访问到我的 github 账号，到时候可能会从我的私密仓库里偷东西。所以我把 github 的 ssh keys 也删了，重新生成了一个。
