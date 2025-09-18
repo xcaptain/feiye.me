@@ -75,6 +75,8 @@ services.msc
 
 ```shell
 ssh-add $env:USERPROFILE\.ssh\id_ed25519
+
+git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"
 ```
 
 测试效果：
