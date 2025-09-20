@@ -82,6 +82,19 @@ ssh-add $env:USERPROFILE\.ssh\id_ed25519
 git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"
 ```
 
+## 0920 更新
+
+上次意外点击钓鱼软件的后果很严重，我虽然运行了杀毒软件，重装了系统，但是到底有没有密码泄露心里还是没底。昨晚12点多准备上床睡觉时，刷了一下邮件，看到google给我发了一个安全警告邮件，内容如下：
+
+![google warn email](./google-warn-email.png)
+
+看发送时间，是20分钟前发的，赶紧起来打开电脑检查账号安全，点链接进去是这样的界面：
+
+![activity](./google-activity.png)
+
+8点多那会儿的登录确实是我的，因为我把系统换回 windows 了，opensuse 桌面实在是用不惯，太多软件缺失，所以重新在浏览器登录了google账号，但是 23:55 那个移除登录步骤不是我干的，那个点在看视频刷手机准备睡觉。所以我赶紧改密码，重新添加身份验证器，删除老的 windows hello验证，删除老的2FA备用验证码。现在应该是安全了。
+
+如果黑客读取了我浏览器的缓存，按理来说也能拿到我的 metamask 钱包的信息，不过可能因为我设置了比较长的访问密码，所以还没有解密出我的私钥来，目前钱包里的零钱还在。
 
 ## 后续做的事情
 
