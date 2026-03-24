@@ -2,7 +2,7 @@
 import Search from "@/components/Search.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import { menuLinks } from "@/site.config";
-import {siteConfig} from "../../site.config";
+import { siteConfig } from "../../site.config";
 ---
 
 <header class="group relative mb-28 flex items-center sm:ps-18" id="main-header">
@@ -41,7 +41,7 @@ import {siteConfig} from "../../site.config";
 				menuLinks.map((link) => (
 					<a
 						aria-current={Astro.url.pathname === link.path ? "page" : false}
-						class="px-4 py-4 underline-offset-2 hover:underline sm:py-0"
+						class="text-accent px-2 py-4 font-semibold sm:px-4 sm:py-0 sm:underline-offset-2 sm:hover:underline"
 						href={link.path}
 					>
 						{link.title}
