@@ -1,7 +1,6 @@
 import { Renderer } from "@takumi-rs/core";
 import type { APIContext, InferGetStaticPropsType } from "astro";
-import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
-import RobotoMono from "@/assets/roboto-mono-regular.ttf";
+import { readFile } from "node:fs/promises";
 import { getAllPosts } from "@/data/post";
 import { getFormattedDate } from "@/utils/date";
 import { ogMarkup } from "./_ogMarkup";
@@ -13,16 +12,20 @@ const renderer = new Renderer({
 	loadDefaultFonts: false,
 });
 
+const notoSCBuffer = await readFile(
+	new URL("../../../public/NotoSansSC-VariableFont_wght.ttf", import.meta.url),
+);
+
 const rendererReady = renderer.loadFonts([
 	{
-		data: Buffer.from(RobotoMono),
-		name: "Roboto Mono",
+		data: notoSCBuffer,
+		name: "Noto Sans SC",
 		style: "normal",
 		weight: 400,
 	},
 	{
-		data: Buffer.from(RobotoMonoBold),
-		name: "Roboto Mono",
+		data: notoSCBuffer,
+		name: "Noto Sans SC",
 		style: "normal",
 		weight: 700,
 	},
