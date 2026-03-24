@@ -32,4 +32,4 @@ jobs:
 
         # ensure build works
       - name: Run Astro build
-        run: bun --bun run build
+        run: bun run build
