@@ -15,7 +15,7 @@
 		"check": "astro check"
 	},
 	"dependencies": {
-		"@astrojs/markdown-remark": "^7.0.0",
+		"@astrojs/markdown-remark": "^7.0.1",
 		"@astrojs/mdx": "^5.0.2",
 		"@astrojs/rss": "^4.0.17",
 		"@astrojs/sitemap": "^3.7.1",
@@ -41,8 +41,8 @@
 		"unist-util-visit": "^5.1.0"
 	},
 	"devDependencies": {
-		"@astrojs/check": "^0.9.7",
-		"@biomejs/biome": "^2.4.7",
+		"@astrojs/check": "^0.9.8",
+		"@biomejs/biome": "^2.4.8",
 		"@iconify-json/mdi": "^1.2.3",
 		"@pagefind/default-ui": "^1.4.0",
 		"@resvg/resvg-js": "^2.6.2",
