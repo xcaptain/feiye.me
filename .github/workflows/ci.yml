@@ -28,8 +28,8 @@ jobs:
 
         # use astro check for issues
       - name: Run Astro check
-        run: bun run check
+        run: bun --bun run check
 
         # ensure build works
       - name: Run Astro build
-        run: bun run build
+        run: bun --bun run build
