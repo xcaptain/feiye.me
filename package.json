@@ -20,6 +20,8 @@
 		"@astrojs/rss": "^4.0.17",
 		"@astrojs/sitemap": "^3.7.1",
 		"@tailwindcss/vite": "^4.2.2",
+		"@takumi-rs/core": "^0.73.1",
+		"@takumi-rs/helpers": "^0.73.1",
 		"astro": "^6.0.8",
 		"astro-expressive-code": "^0.41.7",
 		"astro-icon": "^1.1.5",
