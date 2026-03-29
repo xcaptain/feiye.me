@@ -9,6 +9,8 @@ tags: ["AI", "sparkpin"]
 
 我想做的是一个网页评论插件，就像 disqus 这种一样，能外挂到已有的网站上，然后底部就出现一个悬浮按钮，点击后出现弹窗，在这个弹窗可以跟访问网页的其他人对话聊天。
 
+这个产品我去年这会儿也做过，当时应该连续做了一个多月：见： [markflow](/posts/markflow-now-support-pin-comment)，先做了 chrome 插件，又做了网页 widget，存储数据结构，网页定位都是自己设计的，因为那时候的AI设计能力还不强，只能按需求去补齐一些代码，所以对人的要求还是很高的。现在我承认AI的水平比我高，尝试一下放权完全由AI来生成代码。
+
 ## 首次生成的效果
 
 ![widget overall](widget-overall.png)
@@ -54,4 +56,23 @@ AI 怎么生成代码的就不管了，反正质量不错，写完代码还会�
 
 ![做完的效果](agent-coding-2.png)
 
-跟我的需求符合吗？我看起来不错，比我想的更全面
+比我想的全多了，UI也按照AI的审美来，我觉得还挺好看的。
+
+## 集成到我的博客
+
+我自己是这个挂件的第一个用户，所以我在我的博客先试用一下。集成也很简单，先去 SaaS 后台创建站点，得到 siteId, siteKey，然后在博客的布局页引入 js 文件，然后在合适的地方插入 web component 组件。我的博客全静态的，所以我就在base layout 引入，然后在全局展示这个评论区按钮。
+
+```html {3, 8}
+<html>
+	<head>
+		<script defer src="https://sparkpin.xyz/widget/sparkpin-widget.js?v2"></script>
+	</head>
+	<body>
+        <!-- 省略了其它网页模版 -->
+
+		<spark-pin site-id="site_xxx" site-key="spk_live_xxx" api-origin="https://sparkpin.xyz" />
+	</body>
+</html>
+```
+
+就是插入2行代码搞定，未来不想要了，直接删掉这2行代码就行
