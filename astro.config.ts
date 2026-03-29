@@ -25,7 +25,7 @@ import { expressiveCodeOptions, siteConfig } from "./src/site.config";
 export default defineConfig({
 	site: siteConfig.url,
 	image: {
-		domains: ["feiye.me"],
+		domains: ["feiye.me", "154839.xyz"],
 		service: passthroughImageService(),
 	},
 	integrations: [
